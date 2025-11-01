@@ -1,0 +1,57 @@
+# Go (api/)
+api/*.exe
+api/*.exe~
+api/*.dll
+api/*.so
+api/*.dylib
+api/*.test
+api/*.out
+api/vendor/
+api/go.work
+api/main
+api/bin/
+api/dist/
+api/playground/
+api/local/
+
+# Node.js (ui/)
+ui/node_modules/
+ui/.next/
+ui/out/
+ui/build/
+ui/.cache/
+ui/dist/
+ui/*.tsbuildinfo
+
+# Environment variables
+.env
+.env*.local
+.env.development
+.env.production
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+
+# Testing
+coverage/
+.nyc_output/
+
+# Docker
+*.pid
