@@ -12,7 +12,22 @@ api/main
 api/bin/
 api/dist/
 api/playground/
-api/local/
+local/
+
+# Go (auth/)
+auth/*.exe
+auth/*.exe~
+auth/*.dll
+auth/*.so
+auth/*.dylib
+auth/*.test
+auth/*.out
+auth/vendor/
+auth/go.work
+auth/main
+auth/bin/
+auth/dist/
+auth/tmp/
 
 # Node.js (ui/)
 ui/node_modules/

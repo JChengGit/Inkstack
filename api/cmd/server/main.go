@@ -92,8 +92,8 @@ func main() {
 			posts.POST("/:id/unpublish", postHandler.UnpublishPost)
 
 			// Comments for a specific post
-			posts.GET("/:post_id/comments", commentHandler.ListCommentsByPost)
-			posts.POST("/:post_id/comments", commentHandler.CreateComment)
+			posts.GET("/:id/comments", commentHandler.ListCommentsByPost)
+			posts.POST("/:id/comments", commentHandler.CreateComment)
 		}
 
 		// Comments routes

@@ -43,9 +43,9 @@ type CommentResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-// CreateComment handles POST /api/posts/:post_id/comments
+// CreateComment handles POST /api/posts/:id/comments
 func (h *CommentHandler) CreateComment(c *gin.Context) {
-	postID, err := strconv.ParseUint(c.Param("post_id"), 10, 32)
+	postID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		util.RespondBadRequest(c, "invalid post ID")
 		return
@@ -87,9 +87,9 @@ func (h *CommentHandler) GetComment(c *gin.Context) {
 	c.JSON(http.StatusOK, toCommentResponse(comment))
 }
 
-// ListCommentsByPost handles GET /api/posts/:post_id/comments
+// ListCommentsByPost handles GET /api/posts/:id/comments
 func (h *CommentHandler) ListCommentsByPost(c *gin.Context) {
-	postID, err := strconv.ParseUint(c.Param("post_id"), 10, 32)
+	postID, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		util.RespondBadRequest(c, "invalid post ID")
 		return

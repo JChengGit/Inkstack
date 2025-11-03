@@ -1,8 +1,9 @@
 -- Create comments table
+-- Note: user_id references users in the separate auth service database
 CREATE TABLE IF NOT EXISTS comments (
     id SERIAL PRIMARY KEY,
     post_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,  -- References auth_db.users.id (no FK constraint in microservices)
     parent_id INTEGER,  -- For nested comments/replies
     content TEXT NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'pending',  -- pending, approved, rejected, spam
@@ -22,5 +23,6 @@ CREATE INDEX IF NOT EXISTS idx_comments_deleted_at ON comments(deleted_at);
 
 -- Add table and column comments
 COMMENT ON TABLE comments IS 'User comments on posts';
+COMMENT ON COLUMN comments.user_id IS 'User ID from auth service (no FK constraint - microservices architecture)';
 COMMENT ON COLUMN comments.parent_id IS 'Parent comment ID for nested replies';
 COMMENT ON COLUMN comments.status IS 'Moderation status: pending, approved, rejected, spam';
