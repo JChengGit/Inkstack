@@ -54,6 +54,15 @@ type PostResponse struct {
 }
 
 // CreatePost handles POST /api/posts
+// @Summary Create a new post
+// @Description Create a new blog post with title, content, and metadata
+// @Tags posts
+// @Accept json
+// @Produce json
+// @Param request body CreatePostRequest true "Post details"
+// @Success 201 {object} PostResponse
+// @Failure 400 {object} map[string]interface{}
+// @Router /api/posts [post]
 func (h *PostHandler) CreatePost(c *gin.Context) {
 	var req CreatePostRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -71,6 +80,15 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 }
 
 // GetPost handles GET /api/posts/:id
+// @Summary Get a post by ID
+// @Description Retrieve a single post by its ID
+// @Tags posts
+// @Produce json
+// @Param id path int true "Post ID"
+// @Success 200 {object} PostResponse
+// @Failure 400 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Router /api/posts/{id} [get]
 func (h *PostHandler) GetPost(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -88,6 +106,15 @@ func (h *PostHandler) GetPost(c *gin.Context) {
 }
 
 // GetPostBySlug handles GET /api/posts/slug/:slug
+// @Summary Get a post by slug
+// @Description Retrieve a single post by its URL slug
+// @Tags posts
+// @Produce json
+// @Param slug path string true "Post slug"
+// @Success 200 {object} PostResponse
+// @Failure 400 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Router /api/posts/slug/{slug} [get]
 func (h *PostHandler) GetPostBySlug(c *gin.Context) {
 	slug := c.Param("slug")
 	if slug == "" {
@@ -105,6 +132,17 @@ func (h *PostHandler) GetPostBySlug(c *gin.Context) {
 }
 
 // ListPosts handles GET /api/posts
+// @Summary List posts
+// @Description Get a paginated list of posts with optional filtering
+// @Tags posts
+// @Produce json
+// @Param page query int false "Page number" default(1)
+// @Param page_size query int false "Page size" default(10)
+// @Param status query string false "Filter by status (draft, published, archived)"
+// @Param author_id query int false "Filter by author ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /api/posts [get]
 func (h *PostHandler) ListPosts(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "10"))
@@ -138,6 +176,16 @@ func (h *PostHandler) ListPosts(c *gin.Context) {
 }
 
 // UpdatePost handles PUT /api/posts/:id
+// @Summary Update a post
+// @Description Update an existing post's information
+// @Tags posts
+// @Accept json
+// @Produce json
+// @Param id path int true "Post ID"
+// @Param request body UpdatePostRequest true "Updated post details"
+// @Success 200 {object} PostResponse
+// @Failure 400 {object} map[string]interface{}
+// @Router /api/posts/{id} [put]
 func (h *PostHandler) UpdatePost(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -179,6 +227,14 @@ func (h *PostHandler) UpdatePost(c *gin.Context) {
 }
 
 // DeletePost handles DELETE /api/posts/:id
+// @Summary Delete a post
+// @Description Soft delete a post by ID
+// @Tags posts
+// @Param id path int true "Post ID"
+// @Success 204
+// @Failure 400 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Router /api/posts/{id} [delete]
 func (h *PostHandler) DeletePost(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -195,6 +251,14 @@ func (h *PostHandler) DeletePost(c *gin.Context) {
 }
 
 // PublishPost handles POST /api/posts/:id/publish
+// @Summary Publish a post
+// @Description Change post status to published
+// @Tags posts
+// @Produce json
+// @Param id path int true "Post ID"
+// @Success 200 {object} PostResponse
+// @Failure 400 {object} map[string]interface{}
+// @Router /api/posts/{id}/publish [post]
 func (h *PostHandler) PublishPost(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -212,6 +276,14 @@ func (h *PostHandler) PublishPost(c *gin.Context) {
 }
 
 // UnpublishPost handles POST /api/posts/:id/unpublish
+// @Summary Unpublish a post
+// @Description Change post status to draft
+// @Tags posts
+// @Produce json
+// @Param id path int true "Post ID"
+// @Success 200 {object} PostResponse
+// @Failure 400 {object} map[string]interface{}
+// @Router /api/posts/{id}/unpublish [post]
 func (h *PostHandler) UnpublishPost(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {

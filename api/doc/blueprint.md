@@ -16,6 +16,7 @@ This project serves as a platform to introduce and practice cutting-edge technol
   - Storage:
     - Relational: PostgreSQL
     - NoSQL: MongoDB, Redis (cache/session)
+  - Swagger
   - Search: Elasticsearch / OpenSearch
   - Queues & Async Jobs: RabbitMQ, Kafka
 - Architecture

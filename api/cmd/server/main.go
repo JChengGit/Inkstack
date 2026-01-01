@@ -17,7 +17,25 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "inkstack/docs" // Import generated docs
 )
+
+// @title Inkstack API Service
+// @version 1.0
+// @description Blog and knowledge hub API for posts, comments, and content management
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.inkstack.io/support
+// @contact.email support@inkstack.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8081
+// @BasePath /
 
 func main() {
 	// Load configuration
@@ -75,6 +93,9 @@ func main() {
 
 	// Hello world endpoint
 	r.GET("/hello", handler.HelloWorld)
+
+	// Swagger documentation
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// API routes
 	api := r.Group("/api")

@@ -9,6 +9,12 @@ import (
 )
 
 // HelloWorld handles the hello world endpoint
+// @Summary Hello World
+// @Description Simple hello world endpoint
+// @Tags health
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /hello [get]
 func HelloWorld(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello, World!",
@@ -17,6 +23,13 @@ func HelloWorld(c *gin.Context) {
 }
 
 // HealthCheck handles the health check endpoint
+// @Summary Health check
+// @Description Check if the API service and database are healthy
+// @Tags health
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Failure 503 {object} map[string]interface{}
+// @Router /health [get]
 func HealthCheck(c *gin.Context) {
 	// Check database health
 	dbHealth, err := database.CheckHealth()

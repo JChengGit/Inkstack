@@ -54,7 +54,7 @@ func Load() (*Config, error) {
 			Port:            getEnv("DB_PORT", "5432"),
 			User:            getEnv("DB_USER", "postgres"),
 			Password:        getEnv("DB_PASSWORD", ""),
-			Name:            getEnv("DB_NAME", "inkstack_dev"),
+			Name:            getEnv("DB_NAME", "api"),
 			SSLMode:         getEnv("DB_SSLMODE", "disable"),
 			MaxOpenConns:    getEnvAsInt("DB_MAX_OPEN_CONNS", 25),
 			MaxIdleConns:    getEnvAsInt("DB_MAX_IDLE_CONNS", 5),
