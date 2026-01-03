@@ -738,14 +738,10 @@ const docTemplate = `{
         "handler.CreatePostRequest": {
             "type": "object",
             "required": [
-                "author_id",
                 "content",
                 "title"
             ],
             "properties": {
-                "author_id": {
-                    "type": "integer"
-                },
                 "content": {
                     "type": "string"
                 },

@@ -7,6 +7,7 @@ import (
 	"inkstack/internal/config"
 	"inkstack/internal/database"
 	"inkstack/internal/handler"
+	"inkstack/internal/middleware"
 	"inkstack/internal/repository"
 	"inkstack/internal/service"
 	"log"
@@ -81,6 +82,7 @@ func main() {
 	commentRepo := repository.NewCommentRepository(database.GetDB())
 
 	// Initialize services
+	jwtService := service.NewJWTService(cfg)
 	postService := service.NewPostService(postRepo)
 	commentService := service.NewCommentService(commentRepo, postRepo)
 
@@ -103,28 +105,40 @@ func main() {
 		// Posts routes
 		posts := api.Group("/posts")
 		{
-			posts.GET("", postHandler.ListPosts)
-			posts.POST("", postHandler.CreatePost)
-			posts.GET("/:id", postHandler.GetPost)
-			posts.GET("/slug/:slug", postHandler.GetPostBySlug)
-			posts.PUT("/:id", postHandler.UpdatePost)
-			posts.DELETE("/:id", postHandler.DeletePost)
-			posts.POST("/:id/publish", postHandler.PublishPost)
-			posts.POST("/:id/unpublish", postHandler.UnpublishPost)
+			// Public routes (no authentication required)
+			posts.GET("", postHandler.ListPosts)                              // List all posts
+			posts.GET("/:id", postHandler.GetPost)                            // Get single post
+			posts.GET("/slug/:slug", postHandler.GetPostBySlug)               // Get post by slug
+			posts.GET("/:id/comments", commentHandler.ListCommentsByPost)     // List comments
 
-			// Comments for a specific post
-			posts.GET("/:id/comments", commentHandler.ListCommentsByPost)
-			posts.POST("/:id/comments", commentHandler.CreateComment)
+			// Protected routes (authentication required)
+			protected := posts.Group("")
+			protected.Use(middleware.AuthMiddleware(jwtService))
+			{
+				protected.POST("", postHandler.CreatePost)
+				protected.PUT("/:id", postHandler.UpdatePost)
+				protected.DELETE("/:id", postHandler.DeletePost)
+				protected.POST("/:id/publish", postHandler.PublishPost)
+				protected.POST("/:id/unpublish", postHandler.UnpublishPost)
+				protected.POST("/:id/comments", commentHandler.CreateComment)
+			}
 		}
 
 		// Comments routes
 		comments := api.Group("/comments")
 		{
+			// Public routes
 			comments.GET("/:id", commentHandler.GetComment)
-			comments.PUT("/:id", commentHandler.UpdateComment)
-			comments.DELETE("/:id", commentHandler.DeleteComment)
-			comments.POST("/:id/approve", commentHandler.ApproveComment)
-			comments.POST("/:id/reject", commentHandler.RejectComment)
+
+			// Protected routes (authentication required)
+			protected := comments.Group("")
+			protected.Use(middleware.AuthMiddleware(jwtService))
+			{
+				protected.PUT("/:id", commentHandler.UpdateComment)
+				protected.DELETE("/:id", commentHandler.DeleteComment)
+				protected.POST("/:id/approve", commentHandler.ApproveComment)
+				protected.POST("/:id/reject", commentHandler.RejectComment)
+			}
 		}
 	}
 

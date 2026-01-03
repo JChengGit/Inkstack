@@ -32,8 +32,6 @@ definitions:
     type: object
   handler.CreatePostRequest:
     properties:
-      author_id:
-        type: integer
       content:
         type: string
       excerpt:
@@ -44,7 +42,6 @@ definitions:
         maxLength: 255
         type: string
     required:
-    - author_id
     - content
     - title
     type: object

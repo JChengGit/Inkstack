@@ -23,6 +23,12 @@ WORKDIR /root/
 # Copy the binary from builder
 COPY --from=builder /app/main .
 
-EXPOSE 8080
+# Copy migrations
+COPY --from=builder /app/migrations ./migrations
+
+# Copy .env file (optional, can be overridden by docker-compose env vars)
+COPY --from=builder /app/.env* ./
+
+EXPOSE 8081
 
 CMD ["./main"]

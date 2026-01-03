@@ -24,11 +24,11 @@ func NewPostHandler(service service.PostService) *PostHandler {
 // Request/Response DTOs
 
 type CreatePostRequest struct {
-	Title    string `json:"title" binding:"required,max=255"`
-	Content  string `json:"content" binding:"required"`
-	Excerpt  string `json:"excerpt"`
-	Slug     string `json:"slug"`
-	AuthorID uint   `json:"author_id" binding:"required"`
+	Title   string `json:"title" binding:"required,max=255"`
+	Content string `json:"content" binding:"required"`
+	Excerpt string `json:"excerpt"`
+	Slug    string `json:"slug"`
+	// AuthorID is extracted from JWT token, not from request body
 }
 
 type UpdatePostRequest struct {
@@ -70,7 +70,14 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 		return
 	}
 
-	post, err := h.service.CreatePost(req.Title, req.Content, req.Excerpt, req.Slug, req.AuthorID)
+	// Extract user ID from JWT token (set by auth middleware)
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	post, err := h.service.CreatePost(req.Title, req.Content, req.Excerpt, req.Slug, userID.(uint))
 	if err != nil {
 		util.RespondBadRequest(c, err.Error())
 		return

@@ -67,11 +67,14 @@ func (h *CommentHandler) CreateComment(c *gin.Context) {
 		return
 	}
 
-	// TODO: Get userID from auth context
-	// For now, using a hardcoded value
-	userID := uint(1)
+	// Extract user ID from JWT token (set by auth middleware)
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
 
-	comment, err := h.service.CreateComment(uint(postID), userID, req.Content, req.ParentID)
+	comment, err := h.service.CreateComment(uint(postID), userID.(uint), req.Content, req.ParentID)
 	if err != nil {
 		util.RespondBadRequest(c, err.Error())
 		return

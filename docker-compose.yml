@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  # Auth Service Database
+  auth-db:
+    image: postgres:15-alpine
+    container_name: inkstack-auth-db
+    environment:
+      POSTGRES_DB: auth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inkstack-network
+
+  # API Service Database
+  api-db:
+    image: postgres:15-alpine
+    container_name: inkstack-api-db
+    environment:
+      POSTGRES_DB: api
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - api-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inkstack-network
+
+  # Redis for token blacklist and rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: inkstack-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inkstack-network
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    container_name: inkstack-auth
+    environment:
+      APP_ENV: dev
+      APP_PORT: 8082
+      DB_HOST: auth-db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: auth
+      DB_SSLMODE: disable
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production-min-32-chars
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 168h
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+    ports:
+      - "8082:8082"
+    depends_on:
+      auth-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - inkstack-network
+    restart: unless-stopped
+
+  # API Service
+  api-service:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: inkstack-api
+    environment:
+      APP_ENV: dev
+      APP_PORT: 8081
+      DB_HOST: api-db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: api
+      DB_SSLMODE: disable
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production-min-32-chars
+      AUTH_SERVICE_URL: http://auth-service:8082
+    ports:
+      - "8081:8081"
+    depends_on:
+      api-db:
+        condition: service_healthy
+    networks:
+      - inkstack-network
+    restart: unless-stopped
+
+volumes:
+  auth-db-data:
+    driver: local
+  api-db-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  inkstack-network:
+    driver: bridge

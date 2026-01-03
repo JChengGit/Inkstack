@@ -14,6 +14,8 @@ import (
 type Config struct {
 	App      AppConfig
 	Database DatabaseConfig
+	JWT      JWTConfig
+	Auth     AuthConfig
 }
 
 // AppConfig holds application-level configuration
@@ -33,6 +35,16 @@ type DatabaseConfig struct {
 	MaxOpenConns    int
 	MaxIdleConns    int
 	ConnMaxLifetime time.Duration
+}
+
+// JWTConfig holds JWT configuration
+type JWTConfig struct {
+	Secret string
+}
+
+// AuthConfig holds auth service configuration
+type AuthConfig struct {
+	ServiceURL string
 }
 
 var config *Config
@@ -59,6 +71,12 @@ func Load() (*Config, error) {
 			MaxOpenConns:    getEnvAsInt("DB_MAX_OPEN_CONNS", 25),
 			MaxIdleConns:    getEnvAsInt("DB_MAX_IDLE_CONNS", 5),
 			ConnMaxLifetime: getEnvAsDuration("DB_CONN_MAX_LIFETIME", 5*time.Minute),
+		},
+		JWT: JWTConfig{
+			Secret: getEnv("JWT_SECRET", ""),
+		},
+		Auth: AuthConfig{
+			ServiceURL: getEnv("AUTH_SERVICE_URL", "http://localhost:8082"),
 		},
 	}
 
@@ -89,6 +107,12 @@ func (c *Config) validate() error {
 	}
 	if c.Database.Name == "" {
 		return fmt.Errorf("DB_NAME is required")
+	}
+	if c.JWT.Secret == "" {
+		return fmt.Errorf("JWT_SECRET is required")
+	}
+	if len(c.JWT.Secret) < 32 {
+		return fmt.Errorf("JWT_SECRET must be at least 32 characters long")
 	}
 	return nil
 }
