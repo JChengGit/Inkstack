@@ -18,7 +18,30 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "inkstack-auth/docs" // Import generated docs
 )
+
+// @title Inkstack Auth Service API
+// @version 1.0
+// @description Authentication and user management microservice for Inkstack platform
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.inkstack.io/support
+// @contact.email support@inkstack.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8082
+// @BasePath /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 
 func main() {
 	// Load configuration
@@ -49,9 +72,16 @@ func main() {
 		}
 	}()
 
-	// Run migrations (optional - you can also use SQL migrations manually)
-	if err := database.RunMigrations(); err != nil {
+	// Run migrations
+	// Use relative path - requires running from auth/ directory
+	// Alternative: Use environment variable MIGRATIONS_PATH for flexibility
+	migrationsPath := "./migrations"
+
+	log.Printf("Running database migrations from: %s", migrationsPath)
+	if err := database.RunMigrations(migrationsPath); err != nil {
 		log.Printf("Warning: Failed to run migrations: %v", err)
+		log.Println("Continuing anyway - migrations may need to be run manually")
+		log.Println("Note: Ensure you're running from the auth/ directory")
 	}
 
 	// Set up Gin mode based on environment
@@ -78,6 +108,9 @@ func main() {
 
 	// Health check endpoint
 	r.GET("/health", handler.HealthCheck)
+
+	// Swagger documentation
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// API routes
 	api := r.Group("/api")

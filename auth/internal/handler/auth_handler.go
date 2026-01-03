@@ -56,6 +56,15 @@ type AuthResponse struct {
 }
 
 // Register handles POST /api/auth/register
+// @Summary Register a new user
+// @Description Create a new user account with email, username and password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body RegisterRequest true "Registration details"
+// @Success 201 {object} AuthResponse
+// @Failure 400 {object} map[string]interface{}
+// @Router /api/auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -82,6 +91,15 @@ func (h *AuthHandler) Register(c *gin.Context) {
 }
 
 // Login handles POST /api/auth/login
+// @Summary User login
+// @Description Authenticate user with email/username and password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body LoginRequest true "Login credentials"
+// @Success 200 {object} AuthResponse
+// @Failure 401 {object} map[string]interface{}
+// @Router /api/auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -109,6 +127,15 @@ func (h *AuthHandler) Login(c *gin.Context) {
 }
 
 // RefreshToken handles POST /api/auth/refresh
+// @Summary Refresh access token
+// @Description Get a new access token using refresh token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body RefreshTokenRequest true "Refresh token"
+// @Success 200 {object} map[string]string
+// @Failure 401 {object} map[string]interface{}
+// @Router /api/auth/refresh [post]
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	var req RefreshTokenRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -128,6 +155,16 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 }
 
 // Logout handles POST /api/auth/logout
+// @Summary Logout user
+// @Description Invalidate refresh token and access token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body LogoutRequest true "Refresh token"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Router /api/auth/logout [post]
 func (h *AuthHandler) Logout(c *gin.Context) {
 	var req LogoutRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -150,6 +187,14 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 }
 
 // GetMe handles GET /api/auth/me
+// @Summary Get current user profile
+// @Description Get the authenticated user's profile information
+// @Tags auth
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /api/auth/me [get]
 func (h *AuthHandler) GetMe(c *gin.Context) {
 	// Get user ID from context (set by auth middleware)
 	_, exists := c.Get("user_id")
@@ -176,6 +221,16 @@ func (h *AuthHandler) GetMe(c *gin.Context) {
 }
 
 // ChangePassword handles POST /api/auth/change-password
+// @Summary Change password
+// @Description Change the authenticated user's password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body ChangePasswordRequest true "Old and new password"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Router /api/auth/change-password [post]
 func (h *AuthHandler) ChangePassword(c *gin.Context) {
 	var req ChangePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -203,6 +258,14 @@ func (h *AuthHandler) ChangePassword(c *gin.Context) {
 }
 
 // ValidateToken handles POST /api/auth/validate (for API service)
+// @Summary Validate JWT token
+// @Description Validate a JWT token and return user info (used by API service)
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body map[string]string true "Token to validate"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/auth/validate [post]
 func (h *AuthHandler) ValidateToken(c *gin.Context) {
 	type ValidateRequest struct {
 		Token string `json:"token" binding:"required"`
@@ -232,6 +295,12 @@ func (h *AuthHandler) ValidateToken(c *gin.Context) {
 }
 
 // HealthCheck handles GET /health
+// @Summary Health check
+// @Description Check if the auth service is healthy
+// @Tags health
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /health [get]
 func HealthCheck(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"status":  "healthy",
