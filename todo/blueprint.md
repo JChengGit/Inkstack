@@ -9,7 +9,7 @@ The first incarnation is a developer blog & knowledge hub with accounts, posts, 
 
 This project serves as a platform to introduce and practice cutting-edge technologies step by step, progressing from simple concepts to advanced implementations, with the goal of mastering these technologies.
 - Frontend
-  - Next.js
+  - Vue.js
 - Backend
   - Gin
   - Authentication: OAuth 2
