@@ -2,7 +2,7 @@
 
 ## What is Inkstack?
 
-Inkstack is a full-stack, production-grade web app you’ll build to sharpen engineering skills and showcase real-world competencies.
+Inkstack is a full-stack, production-grade web app you'll build to sharpen engineering skills and showcase real-world competencies.
 The first incarnation is a developer blog & knowledge hub with accounts, posts, comments, tags, search, media, and an admin dashboard—designed to be incrementally evolved into a distributed system.
 
 ## Purpose
