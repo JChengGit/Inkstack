@@ -12,7 +12,7 @@ This project serves as a platform to introduce and practice cutting-edge technol
   - Vue.js
 - Backend
   - Gin
-  - Authentication: OAuth 2
+  - Authentication: JWT, OAuth2
   - Storage:
     - Relational: PostgreSQL
     - NoSQL: MongoDB, Redis (cache/session)
